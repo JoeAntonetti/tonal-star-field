@@ -1,6 +1,7 @@
 var STARS_PER_FRAME = 10;
 var FIELD_OF_VIEW = 400;
 
+var sound = new Sound();
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, FIELD_OF_VIEW);
 
@@ -22,7 +23,7 @@ function render() {
 	camera.position.z += 1;
 
 	// remove far away objects from scne
-	scene.children.forEach(function(object){
+	scene.children.forEach(function(object) {
 		if ((camera.position.z - object.position.z) > FIELD_OF_VIEW) {
 			scene.remove(object);
 		}
@@ -30,9 +31,19 @@ function render() {
 
 	// add stars to scene
 	for (var i = 0; i < STARS_PER_FRAME; i++) {
+		material = new THREE.MeshBasicMaterial({
+			color: 0xffffff
+		});
 		var circle = new THREE.Mesh(geometry, material);
-		circle.position.set(Math.floor(Math.random() * window.innerWidth) - window.innerWidth / 2, Math.floor(Math.random() * window.innerHeight) - window.innerHeight / 2, camera.position.z);
+		circle.position.set(Math.floor(Math.random() * window.innerWidth) - window.innerWidth / 2, Math.floor(Math.random() * window.innerHeight) - window.innerHeight / 2, camera.position.z - 1);
+		if (Math.random() < 0.01) {
+			sound.playNote(0.02);
+			circle.material.color.setRGB(1.0, 0.5, 1);
+
+		}
 		scene.add(circle);
+
 	}
+
 }
 render();
