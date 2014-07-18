@@ -3,7 +3,7 @@ var Sound = function() {
 	var MAX_MIDI = 89;
 	var OCTAVE_LENGTH = 12;
 	var NUMBER_OF_OCTAVES = 11;
-	var SOUND_LENGTH = 1500;
+	var SOUND_LENGTH = 3000;
 	var key = 0;
 
 	function getRandomPentatonicMIDI() {
