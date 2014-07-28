@@ -1,8 +1,9 @@
 /**
  * Constants
  */
-var STARS_PER_FRAME = 2;
-var FIELD_OF_VIEW = 1000;
+var STARS_PER_FRAME = 5;
+var FIELD_OF_VIEW = 1500;
+var ZOOM_SPEED = 5;
 
 /**
  * Setting variables
@@ -31,7 +32,7 @@ function render() {
 	renderer.render(scene, camera);
 
 	// zoom out camera
-	camera.position.z += 1;
+	camera.position.z += ZOOM_SPEED;
 
 	// remove far away objects from scne
 	scene.children.forEach(function(object) {
@@ -46,7 +47,7 @@ function render() {
 			color: 0xffffff
 		});
 		var circle = new THREE.Mesh(geometry, material);
-		circle.position.set(Math.floor(Math.random() * window.innerWidth) - window.innerWidth / 2, Math.floor(Math.random() * window.innerHeight) - window.innerHeight / 2, camera.position.z - 1);
+		circle.position.set(Math.floor(2 * Math.random() * window.innerWidth) - window.innerWidth, Math.floor(2 * Math.random() * window.innerHeight) - window.innerHeight, camera.position.z - 1);
 		if (Math.random() < 0.01) {
 			sound.playNote(maxVolume / 5);
 		}
