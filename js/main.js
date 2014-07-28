@@ -5,6 +5,12 @@ var STARS_PER_FRAME = 2;
 var FIELD_OF_VIEW = 1000;
 
 /**
+ * Setting variables
+ */
+var maxVolume = 0.5;
+var oldMaxVolume;
+
+/**
  * Scene variables
  */
 var sound = new Sound();
@@ -42,7 +48,7 @@ function render() {
 		var circle = new THREE.Mesh(geometry, material);
 		circle.position.set(Math.floor(Math.random() * window.innerWidth) - window.innerWidth / 2, Math.floor(Math.random() * window.innerHeight) - window.innerHeight / 2, camera.position.z - 1);
 		if (Math.random() < 0.01) {
-			sound.playNote(0.10);
+			sound.playNote(maxVolume / 5);
 		}
 		circle.material.color.setRGB(Math.random(), Math.random(), Math.random());
 		scene.add(circle);
@@ -60,17 +66,25 @@ stats.domElement.style.position = 'absolute';
 stats.domElement.style.left = '0px';
 stats.domElement.style.top = '0px';
 stats.domElement.style.display = 'none';
+document.body.appendChild(stats.domElement);
 
 document.onkeypress = function onKeyPress(e) {
 	e = e || window.event;
-	if (e.keyCode == 100) {
+	if (e.keyCode == 100) { // d
 		if (stats.domElement.style.display === 'none') {
 			stats.domElement.style.display = 'block';
 		} else {
 			stats.domElement.style.display = 'none';
 		}
+	} else if (e.keyCode == 109) { // m
+		if (maxVolume == 0)
+			maxVolume = oldMaxVolume;
+		else {
+			oldMaxVolume = maxVolume;
+			maxVolume = 0;
+		}
+
 	}
 }
-document.body.appendChild(stats.domElement);
 
 render();
