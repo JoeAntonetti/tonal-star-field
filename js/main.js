@@ -3,7 +3,7 @@
  */
 var STARS_PER_FRAME = 5;
 var FIELD_OF_VIEW = 1500;
-var ZOOM_SPEED = 5;
+var ZOOM_SPEED = 7;
 
 /**
  * Setting variables
@@ -32,11 +32,11 @@ function render() {
 	renderer.render(scene, camera);
 
 	// zoom out camera
-	camera.position.z += ZOOM_SPEED;
+	camera.position.z -= ZOOM_SPEED;
 
 	// remove far away objects from scne
 	scene.children.forEach(function(object) {
-		if ((camera.position.z - object.position.z) > FIELD_OF_VIEW) {
+		if ((camera.position.z - object.position.z) < 0) {
 			scene.remove(object);
 		}
 	});
@@ -47,11 +47,8 @@ function render() {
 			color: 0xffffff
 		});
 		var circle = new THREE.Mesh(geometry, material);
-		circle.position.set(Math.floor(2 * Math.random() * window.innerWidth) - window.innerWidth, Math.floor(2 * Math.random() * window.innerHeight) - window.innerHeight, camera.position.z - 1);
-		if (Math.random() < 0.01) {
-			sound.playNote(maxVolume / 5);
-		}
-		circle.material.color.setRGB(Math.random(), Math.random(), Math.random());
+		circle.position.set(Math.floor(3 * Math.random() * window.innerWidth) - window.innerWidth * 1.5, Math.floor(3 * Math.random() * window.innerHeight) - window.innerHeight * 1.5, camera.position.z - FIELD_OF_VIEW);
+		circle.material.color.setRGB(1, 1, 1);
 		scene.add(circle);
 	}
 
@@ -86,6 +83,19 @@ document.onkeypress = function onKeyPress(e) {
 		}
 
 	}
+}
+
+document.onclick = function onClick(e) {
+	e = e || window.event;
+	console.log(e);
+	var material = new THREE.MeshBasicMaterial({
+		color: 0xffffff
+	});
+	var circle = new THREE.Mesh(geometry, material);
+	circle.position.set(e.x - (window.innerWidth / 2), (window.innerHeight / 2) - e.y, camera.position.z - FIELD_OF_VIEW);
+	sound.playNote(maxVolume / 5);
+	circle.material.color.setRGB(Math.random(), Math.random(), Math.random());
+	scene.add(circle);
 }
 
 render();
