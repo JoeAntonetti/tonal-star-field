@@ -37,10 +37,13 @@ function render() {
 		camera.position.z -= ZOOM_SPEED;
 
 	// remove far away objects from scene
+	// http://stackoverflow.com/a/16613141/1222411
+	var frustum = new THREE.Frustum();
+	frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse));
 	scene.children.forEach(function(object) {
-		if ((camera.position.z - object.position.z) < 0) {
+		var visible = frustum.intersectsObject(object);
+		if (!visible)
 			scene.remove(object);
-		}
 	});
 
 	// add stars to scene
