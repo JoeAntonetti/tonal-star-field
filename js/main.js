@@ -10,6 +10,7 @@ var ZOOM_SPEED = 7;
  */
 var maxVolume = 0.5;
 var oldMaxVolume;
+var paused = false;
 
 /**
  * Scene variables
@@ -22,7 +23,7 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-var geometry = new THREE.CircleGeometry(2, 12);
+var geometry = new THREE.SphereGeometry(2, 12, 12);
 camera.position.z = 5;
 
 function render() {
@@ -32,9 +33,10 @@ function render() {
 	renderer.render(scene, camera);
 
 	// zoom out camera
-	camera.position.z -= ZOOM_SPEED;
+	if (!paused)
+		camera.position.z -= ZOOM_SPEED;
 
-	// remove far away objects from scne
+	// remove far away objects from scene
 	scene.children.forEach(function(object) {
 		if ((camera.position.z - object.position.z) < 0) {
 			scene.remove(object);
@@ -42,15 +44,16 @@ function render() {
 	});
 
 	// add stars to scene
-	for (var i = 0; i < STARS_PER_FRAME; i++) {
-		var material = new THREE.MeshBasicMaterial({
-			color: 0xffffff
-		});
-		var circle = new THREE.Mesh(geometry, material);
-		circle.position.set(Math.floor(3 * Math.random() * window.innerWidth) - window.innerWidth * 1.5, Math.floor(3 * Math.random() * window.innerHeight) - window.innerHeight * 1.5, camera.position.z - FIELD_OF_VIEW);
-		circle.material.color.setRGB(1, 1, 1);
-		scene.add(circle);
-	}
+	if (!paused)
+		for (var i = 0; i < STARS_PER_FRAME; i++) {
+			var material = new THREE.MeshBasicMaterial({
+				color: 0xffffff
+			});
+			var circle = new THREE.Mesh(geometry, material);
+			circle.position.set(Math.floor(3 * Math.random() * window.innerWidth) - window.innerWidth * 1.5, Math.floor(3 * Math.random() * window.innerHeight) - window.innerHeight * 1.5, camera.position.z - FIELD_OF_VIEW);
+			circle.material.color.setRGB(1, 1, 1);
+			scene.add(circle);
+		}
 
 	stats.end();
 }
@@ -68,6 +71,7 @@ document.body.appendChild(stats.domElement);
 
 document.onkeypress = function onKeyPress(e) {
 	e = e || window.event;
+	console.log(e.keyCode);
 	if (e.keyCode == 100) { // d
 		if (stats.domElement.style.display === 'none') {
 			stats.domElement.style.display = 'block';
@@ -81,7 +85,8 @@ document.onkeypress = function onKeyPress(e) {
 			oldMaxVolume = maxVolume;
 			maxVolume = 0;
 		}
-
+	} else if (e.keyCode == 112) { // p
+		paused = !paused;
 	}
 }
 
