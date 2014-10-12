@@ -4,6 +4,8 @@
 var STARS_PER_FRAME = 5;
 var FIELD_OF_VIEW = 1500;
 var ZOOM_SPEED = 7;
+var Y_SPEED = 0;
+var X_SPEED = 0;
 
 /**
  * Setting variables
@@ -35,6 +37,9 @@ function render() {
 	// zoom out camera
 	if (!paused)
 		camera.position.z -= ZOOM_SPEED;
+		camera.position.y -= Y_SPEED;
+		camera.position.x -= X_SPEED;
+		camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), 6.28);
 
 	// remove far away objects from scene
 	// http://stackoverflow.com/a/16613141/1222411
@@ -50,11 +55,12 @@ function render() {
 	if (!paused)
 		for (var i = 0; i < STARS_PER_FRAME; i++) {
 			var material = new THREE.MeshBasicMaterial({
-				color: 0xffffff
+				//color: (0xffffff | (Math.random() * 100)),
+				wireframe: true
 			});
 			var circle = new THREE.Mesh(geometry, material);
 			circle.position.set(Math.floor(3 * Math.random() * window.innerWidth) - window.innerWidth * 1.5, Math.floor(3 * Math.random() * window.innerHeight) - window.innerHeight * 1.5, camera.position.z - FIELD_OF_VIEW);
-			circle.material.color.setRGB(1, 1, 1);
+			//circle.material.color.setRGB(255, 1, 1);
 			scene.add(circle);
 		}
 
@@ -104,6 +110,15 @@ document.onclick = function onClick(e) {
 	sound.playNote(maxVolume / 5);
 	circle.material.color.setRGB(Math.random(), Math.random(), Math.random());
 	scene.add(circle);
+}
+
+document.onmousemove = function onMove(e){
+	Y_SPEED = ((window.innerHeight/2) - e.clientY)/50;
+	X_SPEED = ((window.innerWidth/2) - e.clientX)/50;
+}
+
+document.ondevicemotion = function onMotion(e){
+camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), 6.28);
 }
 
 render();
