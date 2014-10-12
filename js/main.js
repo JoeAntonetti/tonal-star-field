@@ -6,6 +6,9 @@ var FIELD_OF_VIEW = 1500;
 var ZOOM_SPEED = 7;
 var Y_SPEED = 0;
 var X_SPEED = 0;
+var acceleration = 0.01;
+
+var startBackZoom = false;
 
 /**
  * Setting variables
@@ -35,12 +38,20 @@ function render() {
 	renderer.render(scene, camera);
 
 	// zoom out camera
-	if (!paused)
+	if (!paused){
+		if(startBackZoom){
+			ZOOM_SPEED -= 0.05;
+			if(ZOOM_SPEED < -1){
+				startBackZoom = false;
+			}
+		}else if(ZOOM_SPEED < 5){
+			ZOOM_SPEED += acceleration;
+		}
 		camera.position.z -= ZOOM_SPEED;
 		camera.position.y -= Y_SPEED;
 		camera.position.x -= X_SPEED;
 		camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), 6.28);
-
+}
 	// remove far away objects from scene
 	// http://stackoverflow.com/a/16613141/1222411
 	var frustum = new THREE.Frustum();
@@ -60,7 +71,7 @@ function render() {
 			});
 			var circle = new THREE.Mesh(geometry, material);
 			circle.position.set(Math.floor(3 * Math.random() * window.innerWidth) - window.innerWidth * 1.5, Math.floor(3 * Math.random() * window.innerHeight) - window.innerHeight * 1.5, camera.position.z - FIELD_OF_VIEW);
-			//circle.material.color.setRGB(255, 1, 1);
+			circle.material.color.setRGB(Math.random(), Math.random(), Math.random());
 			scene.add(circle);
 		}
 
@@ -96,6 +107,10 @@ document.onkeypress = function onKeyPress(e) {
 		}
 	} else if (e.keyCode == 112) { // p
 		paused = !paused;
+	}else if(e.keyCode == 49){
+		acceleration+=0.12;
+	}else{
+		startBackZoom = true;
 	}
 }
 
